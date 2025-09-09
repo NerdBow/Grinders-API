@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/NerdBow/Grinders-API/internal/handler"
 )
 
 func Run() {
@@ -15,6 +17,7 @@ func Run() {
 	defer stop()
 
 	mux := http.NewServeMux()
+	addHandlers(mux)
 
 	server := http.Server{
 		Addr:              os.Getenv("ADDRESS"),
@@ -37,4 +40,8 @@ func Run() {
 	if err := server.Shutdown(context.Background()); err != nil {
 		slog.Error("Unable to gracefully shutdown server.", slog.String("error", err.Error()))
 	}
+}
+
+func addHandlers(mux *http.ServeMux) {
+	mux.HandleFunc("GET /hello", handler.HelloHandler())
 }
