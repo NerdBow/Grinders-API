@@ -133,8 +133,8 @@
     {
       "id": "Wu4OTGVr8KnRYwSqoepJL",
       "name": "work_logs",
-      "x": 346.6570528480488,
-      "y": -240.32220778679294,
+      "x": 409.83299019179884,
+      "y": -243.51291169304292,
       "locked": false,
       "fields": [
         {
@@ -148,6 +148,47 @@
           "increment": true,
           "comment": "",
           "id": "_6rdr5BDTZUU9mXAG7HiM"
+        },
+        {
+          "id": "NoJSsunwZSdAI43kiXJDt",
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535,
+          "values": []
+        },
+        {
+          "id": "phg8d2QU5TwjqDNEBGANa",
+          "name": "goal",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "uDbnQYPrWON73aHM6zwWj",
+          "name": "is_goal_completed",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
         },
         {
           "id": "j0UPaRjs1XqeENthXjlsw",
@@ -178,8 +219,8 @@
           "values": []
         },
         {
-          "id": "0IW8l9dh0NP1ISBGFbdlT",
-          "name": "duration",
+          "id": "9Y9vRa85UKeEXJr9ptALn",
+          "name": "end_time",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -192,8 +233,8 @@
           "values": []
         },
         {
-          "id": "9Y9vRa85UKeEXJr9ptALn",
-          "name": "end_time",
+          "id": "0IW8l9dh0NP1ISBGFbdlT",
+          "name": "duration",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -346,7 +387,7 @@
         },
         {
           "id": "uYbk-j-t8Ul2tCFve1KZJ",
-          "name": "creation_date",
+          "name": "creation_time",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -366,7 +407,7 @@
           "check": "",
           "primary": false,
           "unique": false,
-          "notNull": false,
+          "notNull": true,
           "increment": false,
           "comment": "",
           "size": "",
@@ -374,7 +415,7 @@
         },
         {
           "id": "T_XwlJo9KEVxOxtJM6Xpx",
-          "name": "deadline_date",
+          "name": "deadline_time",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -488,8 +529,8 @@
     {
       "id": "W4u6PzYmbz7DNLLbLwZ4t",
       "name": "breaks",
-      "x": 650.1408599769592,
-      "y": -242.26473975801107,
+      "x": 880.5096820082092,
+      "y": -243.54102132051108,
       "locked": false,
       "fields": [
         {
