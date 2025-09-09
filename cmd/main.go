@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+
+	"github.com/NerdBow/Grinders-API/internal/server"
 )
 
 func main() {
@@ -13,6 +15,8 @@ func main() {
 	checkArgonEnv()
 	checkHTTPEnv()
 	initilizeLogging()
+
+	server.Run()
 }
 
 func checkSQLiteEnv() {
