@@ -35,7 +35,7 @@ func NewAuthSettings() ArgonSettings {
 	}
 	slog.Info("Argon2ID settings for the API",
 		slog.Uint64("hashLength", uint64(a.hashLength)),
-		slog.Uint64("memoryInBytes", uint64(a.memory * 1024)),
+		slog.Uint64("memoryInBytes", uint64(a.memory*1024)),
 		slog.Uint64("times", uint64(a.time)),
 		slog.Uint64("threads", uint64(a.threads)),
 		slog.Uint64("saltLength", uint64(a.saltLength)),
@@ -63,7 +63,7 @@ func (a ArgonSettings) CreateNewHash(password string) string {
 	return fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, a.memory*1024, a.time, a.threads, salt, hash)
 }
 
-func (a ArgonSettings) CompareHash(password, hash string) bool {
+func (a ArgonSettings) parseArgonHash(hash string) (ArgonSettings, []byte) {
 	splitHash := strings.Split(hash, "$")
 
 	hashVersion, err := strconv.Atoi(strings.Split(splitHash[2], "=")[1])
@@ -96,13 +96,25 @@ func (a ArgonSettings) CompareHash(password, hash string) bool {
 		os.Exit(1)
 	}
 
-	parsedHashSetting := ArgonSettings {
+	parsedHashSetting := ArgonSettings{
 		hashLength: a.hashLength,
-		memory: uint32(hashMemory),
-		time: uint32(hashTime),
-		threads: uint8(hashThreads),
+		memory:     uint32(hashMemory),
+		time:       uint32(hashTime),
+		threads:    uint8(hashThreads),
 		saltLength: a.saltLength,
 	}
+
+	saltBytes, err := base64.RawStdEncoding.DecodeString(splitHash[len(splitHash)-2])
+	if err != nil {
+		slog.Error("Unable to grab salt from argon2 hash.", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	return parsedHashSetting, saltBytes
+}
+
+func (a ArgonSettings) CompareHash(password, hash string) bool {
+	parsedHashSetting, saltBytes := a.parseArgonHash(hash)
 
 	slog.Debug("Argon2ID settings from parsed hash",
 		slog.Uint64("hashLength", uint64(parsedHashSetting.hashLength)),
@@ -111,12 +123,6 @@ func (a ArgonSettings) CompareHash(password, hash string) bool {
 		slog.Uint64("threads", uint64(parsedHashSetting.threads)),
 		slog.Uint64("saltLength", uint64(parsedHashSetting.saltLength)),
 	)
-
-	saltBytes, err := base64.RawStdEncoding.DecodeString(splitHash[len(splitHash)-2])
-	if err != nil {
-		slog.Error("Unable to grab salt from argon2 hash.", slog.String("error", err.Error()))
-		os.Exit(1)
-	}
 
 	hashBytes := argon2.IDKey([]byte(password), saltBytes, parsedHashSetting.time, parsedHashSetting.memory, parsedHashSetting.threads, parsedHashSetting.hashLength)
 
