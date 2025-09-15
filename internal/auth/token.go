@@ -12,11 +12,14 @@ import (
 	"github.com/google/uuid"
 )
 
-var (
-	ErrKeyNotFound       = errors.New("Unable to get JWT_SIGNING_KEY from the env variables.")
+const (
+	ACCESS_TOKEN_DURATION  = time.Minute * 5
+	REFRESH_TOKEN_DURATION = time.Hour * 24 * 7
 )
 
-type AccessToken struct {
+var ErrUnableToGenerateUUID = errors.New("Unable to generate UUID for token.")
+
+type JWTToken struct {
 	Sub uint64
 	Aud []string
 	Exp time.Time
@@ -24,36 +27,59 @@ type AccessToken struct {
 	Jti string
 }
 
-func CreateAccessToken(userId uint64) (string, error) {
+type RefreshToken struct {
+	Id            string
+	AccessTokenId string
+	Expire        time.Time
+	CreationTime  time.Time
+	UserId        uint64
+}
+
+// CreateAccessToken creates and returns a JWT access token and its uuid for the given user id.
+func CreateAccessToken(userId uint64) (string, string, error) {
 	key := os.Getenv("JWT_SIGNING_KEY")
 
 	tokenId := uuid.New().String()
 	if tokenId == "" {
-		return "", ErrKeyNotFound
+		return "", "", ErrUnableToGenerateUUID
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		Issuer:    "", // I don't have a domain, so I will just leave this blank
 		Subject:   strconv.FormatUint(userId, 10),
 		Audience:  []string{"GrindersTUI"},
-		ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(time.Minute * 5)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(ACCESS_TOKEN_DURATION)),
 		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		ID:        tokenId,
 	})
 
-	s, err := token.SignedString([]byte(key))
+	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return s, nil
+	return tokenString, tokenId, err
 }
 
-func ParseAccessToken(tokenString string) (AccessToken, error) {
+// CreateRefreshToken creates and returns a RefreshToken struct for the given user id and Access Token Id.
+func CreateRefreshToken(userId uint64, accessTokenId string) (RefreshToken, error) {
+	tokenId := uuid.New().String()
+	if tokenId == "" {
+		return RefreshToken{}, ErrUnableToGenerateUUID
+	}
+
+	return RefreshToken{
+		Id: tokenId,
+		AccessTokenId: accessTokenId,
+		Expire: time.Now().UTC().Add(REFRESH_TOKEN_DURATION),
+		CreationTime: time.Now().UTC(),
+		UserId: userId,
+	}, nil
+}
+
+// ParseToken parses a given JWT token string and returns a JWTToken of the parsed token claims.
+func ParseToken(tokenString string) (JWTToken, error) {
 	keyFunc := func(t *jwt.Token) (any, error) {
 		key := os.Getenv("JWT_SIGNING_KEY")
-		if key == "" {
-			return nil, ErrKeyNotFound
-		}
 		return []byte(key), nil
 	}
 
@@ -61,22 +87,22 @@ func ParseAccessToken(tokenString string) (AccessToken, error) {
 
 	_, err := jwt.ParseWithClaims(tokenString, &claims, keyFunc, jwt.WithValidMethods([]string{"HS256"}))
 	if err != nil {
-		return AccessToken{}, err
+		return JWTToken{}, err
 	}
 
-	accessToken := AccessToken{}
+	jwtToken := JWTToken{}
 
-	accessToken.Sub, err = strconv.ParseUint(claims.Subject, 10, 64)
+	jwtToken.Sub, err = strconv.ParseUint(claims.Subject, 10, 64)
 	if err != nil {
-		return AccessToken{}, fmt.Errorf("Unable cast subject string into uint64: %w", err)
+		return JWTToken{}, fmt.Errorf("Unable cast subject string into uint64: %w", err)
 	}
 
-	accessToken.Aud = claims.Audience
-	accessToken.Exp = claims.ExpiresAt.Time
-	accessToken.Iat = claims.IssuedAt.Time
-	accessToken.Jti = claims.ID
+	jwtToken.Aud = claims.Audience
+	jwtToken.Exp = claims.ExpiresAt.Time
+	jwtToken.Iat = claims.IssuedAt.Time
+	jwtToken.Jti = claims.ID
 
-	slog.Debug("Access Token", slog.Any("accessToken", accessToken))
+	slog.Debug("Token", slog.Any("jwtStruct", jwtToken))
 
-	return accessToken, nil
+	return jwtToken, nil
 }
