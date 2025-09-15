@@ -11,12 +11,20 @@ import (
 
 func main() {
 	// If no fatal is thrown then all env vars are not empty.
+	checkJWTEnv()
 	checkSQLiteEnv()
 	checkArgonEnv()
 	checkHTTPEnv()
 	initilizeLogging()
 
 	server.Run()
+}
+
+func checkJWTEnv() {
+	key := os.Getenv("JWT_SIGNING_KEY")
+	if key == "" {
+		log.Fatalf("Unable to get \"JWT_SIGNING_KEY\" environmnet variable.\nPlease make sure to set it before starting the API.")
+	}
 }
 
 func checkSQLiteEnv() {
