@@ -11,6 +11,7 @@ import (
 
 func main() {
 	// If no fatal is thrown then all env vars are not empty.
+	checkJWTEnv()
 	checkSQLiteEnv()
 	checkArgonEnv()
 	checkHTTPEnv()
@@ -19,11 +20,19 @@ func main() {
 	server.Run()
 }
 
+func checkJWTEnv() {
+	key := os.Getenv("JWT_SIGNING_KEY")
+	if key == "" {
+		log.Fatalf("Unable to get \"JWT_SIGNING_KEY\" environmnet variable.\nPlease make sure to set it before starting the API.")
+	}
+}
+
 func checkSQLiteEnv() {
 	dbfile := os.Getenv("DBFILE")
 	if dbfile == "" {
 		log.Fatalf("Unable to get \"DBFILE\" environmnet variable.\nPlease make sure to set it before starting the API.")
 	}
+
 	_, err := os.Stat(dbfile)
 	if os.IsNotExist(err) {
 		log.Fatalf("File %s could not be found.\nPlease specify a .db file to use for the database of the API.", dbfile)
@@ -35,7 +44,7 @@ func checkArgonEnv() {
 	if time == "" {
 		log.Fatalf("Unable to get \"ARGON_TIME\" environmnet variable.\nPlease make sure to set it before starting the API.")
 	}
-	n, err := strconv.Atoi(time)
+	n, err := strconv.ParseUint(time, 10, 32)
 	if err != nil || n <= 0 {
 		log.Fatalf("Variable \"ARGON_TIME\" must be a positive integer greater than 0.")
 	}
@@ -44,7 +53,7 @@ func checkArgonEnv() {
 	if memory == "" {
 		log.Fatalf("Unable to get \"ARGON_MEMORY\" environmnet variable.\nPlease make sure to set it before starting the API.")
 	}
-	n, err = strconv.Atoi(memory)
+	n, err = strconv.ParseUint(memory, 10, 32)
 	if err != nil || n <= 0 {
 		log.Fatalf("Variable \"ARGON_MEMORY\" must be a positive integer greater than 0.")
 	}
@@ -53,7 +62,7 @@ func checkArgonEnv() {
 	if threads == "" {
 		log.Fatalf("Unable to get \"ARGON_THREADS\" environmnet variable.\nPlease make sure to set it before starting the API.")
 	}
-	n, err = strconv.Atoi(threads)
+	n, err = strconv.ParseUint(threads, 10, 32)
 	if err != nil || n <= 0 {
 		log.Fatalf("Variable \"ARGON_THREADS\" must be a positive integer greater than 0.")
 	}
@@ -62,9 +71,18 @@ func checkArgonEnv() {
 	if hashLength == "" {
 		log.Fatalf("Unable to get \"ARGON_HASH_LENGTH\" environmnet variable.\nPlease make sure to set it before starting the API.")
 	}
-	n, err = strconv.Atoi(hashLength)
+	n, err = strconv.ParseUint(hashLength, 10, 32)
 	if err != nil || n <= 0 {
 		log.Fatalf("Variable \"ARGON_HASH_LENGTH\" must be a positive integer greater than 0.")
+	}
+
+	saltLength := os.Getenv("ARGON_SALT_LENGTH")
+	if saltLength == "" {
+		log.Fatalf("Unable to get \"ARGON_SALT_LENGTH\" environmnet variable.\nPlease make sure to set it before starting the API.")
+	}
+	n, err = strconv.ParseUint(saltLength, 10, 32)
+	if err != nil || n <= 0 {
+		log.Fatalf("Variable \"ARGON_SALT_LENGTH\" must be a positive integer greater than 0.")
 	}
 }
 
