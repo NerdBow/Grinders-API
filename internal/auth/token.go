@@ -29,7 +29,6 @@ type JWTToken struct {
 
 type RefreshToken struct {
 	Id            string
-	AccessTokenId string
 	Expire        time.Time
 	CreationTime  time.Time
 	UserId        uint64
@@ -61,7 +60,7 @@ func CreateAccessToken(userId uint64) (string, string, error) {
 }
 
 // CreateRefreshToken creates and returns a RefreshToken struct for the given user id and Access Token Id.
-func CreateRefreshToken(userId uint64, accessTokenId string) (RefreshToken, error) {
+func CreateRefreshToken(userId uint64) (RefreshToken, error) {
 	tokenId := uuid.New().String()
 	if tokenId == "" {
 		return RefreshToken{}, ErrUnableToGenerateUUID
@@ -69,7 +68,6 @@ func CreateRefreshToken(userId uint64, accessTokenId string) (RefreshToken, erro
 
 	return RefreshToken{
 		Id: tokenId,
-		AccessTokenId: accessTokenId,
 		Expire: time.Now().UTC().Add(REFRESH_TOKEN_DURATION),
 		CreationTime: time.Now().UTC(),
 		UserId: userId,
