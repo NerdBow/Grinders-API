@@ -133,8 +133,8 @@
     {
       "id": "Wu4OTGVr8KnRYwSqoepJL",
       "name": "work_logs",
-      "x": 409.83299019179884,
-      "y": -243.51291169304292,
+      "x": 346.6570528480488,
+      "y": -240.32220778679294,
       "locked": false,
       "fields": [
         {
@@ -150,35 +150,8 @@
           "id": "_6rdr5BDTZUU9mXAG7HiM"
         },
         {
-          "id": "NoJSsunwZSdAI43kiXJDt",
-          "name": "description",
-          "type": "TEXT",
-          "default": "",
-          "check": "",
-          "primary": false,
-          "unique": false,
-          "notNull": true,
-          "increment": false,
-          "comment": "",
-          "size": 65535,
-          "values": []
-        },
-        {
-          "id": "phg8d2QU5TwjqDNEBGANa",
-          "name": "goal",
-          "type": "TEXT",
-          "default": "",
-          "check": "",
-          "primary": false,
-          "unique": false,
-          "notNull": true,
-          "increment": false,
-          "comment": "",
-          "size": 65535
-        },
-        {
-          "id": "uDbnQYPrWON73aHM6zwWj",
-          "name": "is_goal_completed",
+          "id": "j0UPaRjs1XqeENthXjlsw",
+          "name": "task_id",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -191,14 +164,40 @@
           "values": []
         },
         {
-          "id": "j0UPaRjs1XqeENthXjlsw",
-          "name": "task_id",
-          "type": "INTEGER",
+          "id": "R9v4TZceX0voCrjL2-tbJ",
+          "name": "objective",
+          "type": "TEXT",
           "default": "",
           "check": "",
           "primary": false,
           "unique": false,
-          "notNull": true,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "iXqaOx1VScFj9vIbuHsuL",
+          "name": "work_description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "epRsiNStBnUWPilQDvrkB",
+          "name": "is_complete",
+          "type": "BOOLEAN",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
           "increment": false,
           "comment": "",
           "size": "",
@@ -219,8 +218,8 @@
           "values": []
         },
         {
-          "id": "9Y9vRa85UKeEXJr9ptALn",
-          "name": "end_time",
+          "id": "0IW8l9dh0NP1ISBGFbdlT",
+          "name": "duration",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -233,8 +232,8 @@
           "values": []
         },
         {
-          "id": "0IW8l9dh0NP1ISBGFbdlT",
-          "name": "duration",
+          "id": "9Y9vRa85UKeEXJr9ptALn",
+          "name": "end_time",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -387,7 +386,7 @@
         },
         {
           "id": "uYbk-j-t8Ul2tCFve1KZJ",
-          "name": "creation_time",
+          "name": "creation_date",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -407,7 +406,7 @@
           "check": "",
           "primary": false,
           "unique": false,
-          "notNull": true,
+          "notNull": false,
           "increment": false,
           "comment": "",
           "size": "",
@@ -415,7 +414,7 @@
         },
         {
           "id": "T_XwlJo9KEVxOxtJM6Xpx",
-          "name": "deadline_time",
+          "name": "deadline_date",
           "type": "INTEGER",
           "default": "",
           "check": "",
@@ -529,8 +528,8 @@
     {
       "id": "W4u6PzYmbz7DNLLbLwZ4t",
       "name": "breaks",
-      "x": 880.5096820082092,
-      "y": -243.54102132051108,
+      "x": 844.4547278675843,
+      "y": -67.38225865644858,
       "locked": false,
       "fields": [
         {
@@ -575,6 +574,140 @@
         },
         {
           "id": "huWFFY07RbYMcF8uDryxV",
+          "name": "work_log_id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": "muQ-pUVL7MoqOPOY9u4YH",
+      "name": "sessions",
+      "x": -785.798118683026,
+      "y": -581.1859638070586,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "BuIMgGID6q7-BxJaGclKd",
+          "size": 65535,
+          "values": []
+        },
+        {
+          "id": "cbE3IQlpYFwvtst_omkJ-",
+          "name": "expiration_time",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "i9FRKv_O3amgWsu9vDcvC",
+          "name": "creation_time",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "tDLv4dHv06m_OC6_yOdDm",
+          "name": "user_id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": "LABFMmYVvppJguRyLRpry",
+      "name": "pauses",
+      "x": 844.0509770770875,
+      "y": -449.39557269530843,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "1Yfp4l4YvmIWkGENXziHB"
+        },
+        {
+          "id": "sZjcOjlfvB9FHw7DOOV33",
+          "name": "start_time",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "veCv2SqWr9iOTEu07yENN",
+          "name": "duration",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "gGkCpTobGsOCuyUz1GuSy",
           "name": "work_log_id",
           "type": "INTEGER",
           "default": "",
@@ -681,6 +814,28 @@
       "deleteConstraint": "No action",
       "name": "fk_goals_category_id_category",
       "id": 7
+    },
+    {
+      "startTableId": "muQ-pUVL7MoqOPOY9u4YH",
+      "startFieldId": "tDLv4dHv06m_OC6_yOdDm",
+      "endTableId": "QbFa_w-pqyhe663Ws9hc1",
+      "endFieldId": "iweDK3uaQvhyjSt_fYWch",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "fk_sessions_user_id_users",
+      "id": 8
+    },
+    {
+      "startTableId": "LABFMmYVvppJguRyLRpry",
+      "startFieldId": "gGkCpTobGsOCuyUz1GuSy",
+      "endTableId": "Wu4OTGVr8KnRYwSqoepJL",
+      "endFieldId": "_6rdr5BDTZUU9mXAG7HiM",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "fk_pauses_work_log_id_work_logs",
+      "id": 9
     }
   ],
   "notes": [],
