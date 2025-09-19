@@ -36,3 +36,8 @@ builds/
 
 # scripts
 *.sh
+
+# databases
+*.db
+*.db-shm
+*.db-wal
