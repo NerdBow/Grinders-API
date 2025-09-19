@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"crypto"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
@@ -130,4 +131,11 @@ func (a ArgonSettings) CompareHash(password, hash string) bool {
 	salt := base64.RawStdEncoding.EncodeToString(saltBytes)
 
 	return fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, parsedHashSetting.memory, parsedHashSetting.time, parsedHashSetting.threads, salt, passwordHash) == hash
+}
+
+func HashRefreshTokenId(tokenId string) string {
+	hash := crypto.SHA256.New()
+	hashedBytes := hash.Sum([]byte(tokenId))
+	tokenIdHash := base64.RawStdEncoding.EncodeToString(hashedBytes)
+	return tokenIdHash
 }
