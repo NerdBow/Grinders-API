@@ -31,6 +31,14 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 	FOREIGN KEY ("user_id") REFERENCES "users"("id")
 	ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+CREATE TABLE IF NOT EXISTS "users" (
+	"id" INTEGER NOT NULL UNIQUE,
+	"username" TEXT NOT NULL,
+	"salt" TEXT NOT NULL,
+	"hash" TEXT NOT NULL,
+	"creation_time" TIMESTAMP,
+	PRIMARY KEY("id")
+);
 `
 	_, err := db.Exec(query)
 	if err != nil {
