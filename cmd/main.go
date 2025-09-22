@@ -25,6 +25,26 @@ func checkJWTEnv() {
 	if key == "" {
 		log.Fatalf("Unable to get \"JWT_SIGNING_KEY\" environmnet variable.\nPlease make sure to set it before starting the API.")
 	}
+
+	accessTokenDuration := os.Getenv("ACCESS_TOKEN_DURATION")
+	if accessTokenDuration == "" {
+		log.Fatalf("Unable to get \"ACCESS_TOKEN_DURATION\" environmnet variable.\nPlease make sure to set it before starting the API.")
+	}
+
+	n, err := strconv.ParseUint(accessTokenDuration, 10, 32)
+	if err != nil || n <= 0 {
+		log.Fatalf("Variable \"ACCESS_TOKEN_DURATION\" must be a positive integer greater than 0.")
+	}
+
+	sessionDuration := os.Getenv("SESSION_DURATION")
+	if sessionDuration == "" {
+		log.Fatalf("Unable to get \"SESSION_DURATION\" environmnet variable.\nPlease make sure to set it before starting the API.")
+	}
+
+	n, err = strconv.ParseUint(sessionDuration, 10, 32)
+	if err != nil || n <= 0 {
+		log.Fatalf("Variable \"SESSION_DURATION\" must be a positive integer greater than 0.")
+	}
 }
 
 func checkSQLiteEnv() {
