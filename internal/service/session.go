@@ -9,11 +9,15 @@ import (
 )
 
 type SessionService struct {
-	sessionDb database.SessionsDB
+	sessionDb     database.SessionsDB
+	tokenSettings auth.TokenSettings
 }
 
-func NewSessionService(sessionDb database.SessionsDB) SessionService {
-	return SessionService{sessionDb}
+func NewSessionService(sessionDb database.SessionsDB, tokenSettings auth.TokenSettings) SessionService {
+	return SessionService{
+		sessionDb:     sessionDb,
+		tokenSettings: tokenSettings,
+	}
 }
 
 // CreateSession will create a new session for the specified userId and return refresh string id.
@@ -22,7 +26,7 @@ func (s *SessionService) CreateSession(userId uint64) (string, error) {
 		return "", util.ErrInvalidUserId
 	}
 
-	token, err := auth.CreateRefreshToken(userId)
+	token, err := s.tokenSettings.CreateRefreshToken(userId)
 	if err != nil {
 		return "", err
 	}
