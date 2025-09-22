@@ -12,11 +12,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const (
-	ACCESS_TOKEN_DURATION  = time.Minute * 5
-	REFRESH_TOKEN_DURATION = time.Hour * 24 * 7
-)
-
 var ErrUnableToGenerateUUID = errors.New("Unable to generate UUID for token.")
 
 type JWTToken struct {
@@ -28,14 +23,31 @@ type JWTToken struct {
 }
 
 type RefreshToken struct {
-	Id            string
-	Expire        time.Time
-	CreationTime  time.Time
-	UserId        uint64
+	Id           string
+	Expire       time.Time
+	CreationTime time.Time
+	UserId       uint64
+}
+
+type TokenSettings struct {
+	AccessDuration  time.Duration // In minutes for env var ACCESS_TOKEN_DURATION
+	SessionDuration time.Duration // In hours for env var SESSION_DURATION
+}
+
+// NewTokenSettings creates a new TokenSettings with its field specified by the related env vars.
+func NewTokenSettings() TokenSettings {
+	settings := TokenSettings{}
+	s := os.Getenv("ACCESS_TOKEN_DURATION")
+	n, _ := strconv.ParseUint(s, 10, 64)
+	settings.AccessDuration = time.Duration(time.Minute * time.Duration(n))
+	s = os.Getenv("SESSION_DURATION")
+	n, _ = strconv.ParseUint(s, 10, 64)
+	settings.SessionDuration = time.Duration(time.Hour * time.Duration(n))
+	return settings
 }
 
 // CreateAccessToken creates and returns a JWT access token and its uuid for the given user id.
-func CreateAccessToken(userId uint64) (string, string, error) {
+func (s *TokenSettings) CreateAccessToken(userId uint64) (string, string, error) {
 	key := os.Getenv("JWT_SIGNING_KEY")
 
 	tokenId := uuid.New().String()
@@ -47,7 +59,7 @@ func CreateAccessToken(userId uint64) (string, string, error) {
 		Issuer:    "", // I don't have a domain, so I will just leave this blank
 		Subject:   strconv.FormatUint(userId, 10),
 		Audience:  []string{"GrindersTUI"},
-		ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(ACCESS_TOKEN_DURATION)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(s.AccessDuration)),
 		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		ID:        tokenId,
 	})
@@ -60,17 +72,17 @@ func CreateAccessToken(userId uint64) (string, string, error) {
 }
 
 // CreateRefreshToken creates and returns a RefreshToken struct for the given user id and Access Token Id.
-func CreateRefreshToken(userId uint64) (RefreshToken, error) {
+func (s *TokenSettings) CreateRefreshToken(userId uint64) (RefreshToken, error) {
 	tokenId := uuid.New().String()
 	if tokenId == "" {
 		return RefreshToken{}, ErrUnableToGenerateUUID
 	}
 
 	return RefreshToken{
-		Id: tokenId,
-		Expire: time.Now().UTC().Add(REFRESH_TOKEN_DURATION),
+		Id:           tokenId,
+		Expire:       time.Now().UTC().Add(s.SessionDuration),
 		CreationTime: time.Now().UTC(),
-		UserId: userId,
+		UserId:       userId,
 	}, nil
 }
 
