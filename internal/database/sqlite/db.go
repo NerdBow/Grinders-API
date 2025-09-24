@@ -38,6 +38,14 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"creation_time" TIMESTAMP,
 	PRIMARY KEY("id")
 );
+CREATE TABLE IF NOT EXISTS "categories" (
+	"id" INTEGER NOT NULL UNIQUE,
+	"name" TEXT NOT NULL,
+	"user_id" INTEGER NOT NULL,
+	PRIMARY KEY("id"),
+	FOREIGN KEY ("user_id") REFERENCES "users"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);
 `
 	_, err := db.Exec(query)
 	if err != nil {
