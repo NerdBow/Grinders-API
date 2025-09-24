@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Grinders API
+  summary: The REST API for Grinders (the time tracking application not the dating platform)
+  version: "0.0.1"
+
+security: []
+
+tags:
+  - name: Auth
+    description: All endpoints relating to autheticating the user
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsernamePassword'
+
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsernamePassword'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+
+components:
+  schemas:
+    UsernamePassword:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    
+    Tokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+
+    RefreshToken:
+      type: object
+      properties:
+        refreshToken:
+          type: string
