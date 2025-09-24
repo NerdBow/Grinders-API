@@ -19,6 +19,9 @@ type UsersDB interface {
 	// GetUser will query a user with the specified userId.
 	// If there is no user with the userId, then an error will be returned.
 	GetUser(userId uint64) (util.User, error)
+	// GetUserByUsername will query a user with the specified username.
+	// If there is no user with the userId, then an error will be returned.
+	GetUserByUsername(username string) (util.User, error)
 	// EditUsername will change the username of the user specified by userId to the given newName.
 	// If there is no user with the userId, then no error will be returned.
 	// Errors are only returned for database errors.

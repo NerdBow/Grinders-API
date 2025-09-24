@@ -33,8 +33,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 );
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" INTEGER NOT NULL UNIQUE,
-	"username" TEXT NOT NULL,
-	"salt" TEXT NOT NULL,
+	"username" TEXT NOT NULL UNIQUE,
 	"hash" TEXT NOT NULL,
 	"creation_time" TIMESTAMP,
 	PRIMARY KEY("id")

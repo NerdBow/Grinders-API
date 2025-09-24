@@ -7,8 +7,8 @@ import (
 )
 
 func (db *SQLiteDB) AddUser(user util.User) error {
-	query := "INSERT INTO users (username, salt, hash, creation_time) VALUES (?, ?, ?, ?);"
-	result, err := db.Exec(query, user.Username, user.Salt, user.Hash, user.CreationTime)
+	query := "INSERT INTO users (username, hash, creation_time) VALUES (?, ?, ?);"
+	result, err := db.Exec(query, user.Username, user.Hash, user.CreationTime)
 	if err != nil {
 		slog.Error("")
 		return err
@@ -26,11 +26,24 @@ func (db *SQLiteDB) AddUser(user util.User) error {
 }
 
 func (db *SQLiteDB) GetUser(userId uint64) (util.User, error) {
-	query := "SELECT id, username, salt, hash, creation_time FROM users WHERE id = ?;"
+	query := "SELECT id, username, hash, creation_time FROM users WHERE id = ?;"
 	row := db.QueryRow(query, userId)
 
 	user := util.User{}
-	err := row.Scan(&user.Id, &user.Username, &user.Salt, &user.Hash, &user.CreationTime)
+	err := row.Scan(&user.Id, &user.Username, &user.Hash, &user.CreationTime)
+	if err != nil {
+		slog.Error("")
+		return user, err
+	}
+	return user, nil
+}
+
+func (db *SQLiteDB) GetUserByUsername(username string) (util.User, error) {
+	query := "SELECT id, username, hash, creation_time FROM users WHERE username = ?;"
+	row := db.QueryRow(query, username)
+
+	user := util.User{}
+	err := row.Scan(&user.Id, &user.Username, &user.Hash, &user.CreationTime)
 	if err != nil {
 		slog.Error("")
 		return user, err
