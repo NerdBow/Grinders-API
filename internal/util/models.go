@@ -12,7 +12,11 @@ type Session struct {
 type User struct {
 	Id           uint64
 	Username     string
-	Salt         string
 	Hash         string
 	CreationTime time.Time
+}
+
+type Tokens struct {
+	Access  string `json:"access"`
+	Refresh string `json:"refresh"`
 }
