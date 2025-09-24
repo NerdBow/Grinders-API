@@ -92,20 +92,7 @@
           "default": "",
           "check": "",
           "primary": false,
-          "unique": false,
-          "notNull": true,
-          "increment": false,
-          "comment": "",
-          "size": 65535
-        },
-        {
-          "id": "vfh1AJvZxvVEPk0Va-4Ce",
-          "name": "salt",
-          "type": "TEXT",
-          "default": "",
-          "check": "",
-          "primary": false,
-          "unique": false,
+          "unique": true,
           "notNull": true,
           "increment": false,
           "comment": "",
@@ -123,6 +110,20 @@
           "increment": false,
           "comment": "",
           "size": 65535,
+          "values": []
+        },
+        {
+          "id": "Pq0qG68mzB0zh7PSuKn9k",
+          "name": "creation_time",
+          "type": "TIMESTAMP",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
           "values": []
         }
       ],
@@ -206,7 +207,7 @@
         {
           "id": "jBj1LXRRao9Ra4VkY589u",
           "name": "start_time",
-          "type": "INTEGER",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -234,7 +235,7 @@
         {
           "id": "9Y9vRa85UKeEXJr9ptALn",
           "name": "end_time",
-          "type": "INTEGER",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -253,8 +254,8 @@
     {
       "id": "CpNhk1nYRFVLVgCJDUmrd",
       "name": "category",
-      "x": -333.05515167224627,
-      "y": 143.7896897397501,
+      "x": -396.3377079225499,
+      "y": 148.06553813504092,
       "locked": false,
       "fields": [
         {
@@ -386,8 +387,8 @@
         },
         {
           "id": "uYbk-j-t8Ul2tCFve1KZJ",
-          "name": "creation_date",
-          "type": "INTEGER",
+          "name": "creation_time",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -400,8 +401,8 @@
         },
         {
           "id": "umk0NERRfv8cRmbqka5dh",
-          "name": "completion_date",
-          "type": "INTEGER",
+          "name": "completion_time",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -414,8 +415,8 @@
         },
         {
           "id": "T_XwlJo9KEVxOxtJM6Xpx",
-          "name": "deadline_date",
-          "type": "INTEGER",
+          "name": "deadline_time",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -547,7 +548,7 @@
         {
           "id": "6wdn9YW0sInNBxFKL5FHQ",
           "name": "start_time",
-          "type": "INTEGER",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -615,7 +616,7 @@
         {
           "id": "cbE3IQlpYFwvtst_omkJ-",
           "name": "expiration_time",
-          "type": "INTEGER",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -629,7 +630,7 @@
         {
           "id": "i9FRKv_O3amgWsu9vDcvC",
           "name": "creation_time",
-          "type": "INTEGER",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -681,7 +682,7 @@
         {
           "id": "sZjcOjlfvB9FHw7DOOV33",
           "name": "start_time",
-          "type": "INTEGER",
+          "type": "TIMESTAMP",
           "default": "",
           "check": "",
           "primary": false,
@@ -836,6 +837,17 @@
       "deleteConstraint": "No action",
       "name": "fk_pauses_work_log_id_work_logs",
       "id": 9
+    },
+    {
+      "startTableId": "CpNhk1nYRFVLVgCJDUmrd",
+      "startFieldId": "dRkF9w9iA7wzdHFRxKm_x",
+      "endTableId": "QbFa_w-pqyhe663Ws9hc1",
+      "endFieldId": "iweDK3uaQvhyjSt_fYWch",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "fk_category_user_id_users",
+      "id": 10
     }
   ],
   "notes": [],
