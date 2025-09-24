@@ -20,3 +20,9 @@ type Tokens struct {
 	Access  string `json:"access"`
 	Refresh string `json:"refresh"`
 }
+
+type Category struct {
+	Id     uint64 `json:"id"`
+	Name   string `json:"name"`
+	UserId uint64 `json:"userId"`
+}
