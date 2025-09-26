@@ -1,10 +1,12 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
 
+	"github.com/NerdBow/Grinders-API/internal/util"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -15,6 +17,7 @@ type SQLiteDB struct {
 func NewSQLiteDB(file string) (SQLiteDB, error) {
 	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?_journal=WAL", file))
 	if err != nil {
+		slog.LogAttrs(context.Background(), slog.LevelError, "SQLiteDB Open", slog.String("err", err.Error()))
 		return SQLiteDB{}, err
 	}
 	return SQLiteDB{db}, nil
@@ -49,8 +52,8 @@ CREATE TABLE IF NOT EXISTS "categories" (
 `
 	_, err := db.Exec(query)
 	if err != nil {
-		slog.Error("")
-		return err
+		slog.LogAttrs(context.Background(), slog.LevelError, "SQLiteDB Create Table", slog.String("err", err.Error()))
+		return util.ErrDatabase
 	}
 	return nil
 }
