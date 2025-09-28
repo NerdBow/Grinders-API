@@ -27,7 +27,7 @@ func NewAuthService(userDb database.UsersDB, sessionDb database.SessionsDB, auth
 	}
 }
 
-func (s *AuthService) RegisterNewUser(username string, password string) error {
+func (s *AuthService) RegisterNewUser(logger *slog.Logger, username string, password string) error {
 	if username == "" {
 		slog.Info("")
 		return nil
@@ -42,7 +42,7 @@ func (s *AuthService) RegisterNewUser(username string, password string) error {
 		Hash:         s.authSettings.CreateNewHash(password),
 		CreationTime: time.Now().UTC(),
 	}
-	err := s.userDb.AddUser(user)
+	err := s.userDb.AddUser(logger, user)
 	if err != nil {
 		return err
 	}
@@ -50,8 +50,8 @@ func (s *AuthService) RegisterNewUser(username string, password string) error {
 	return nil
 }
 
-func (s *AuthService) Login(username string, password string) (util.Tokens, error) {
-	user, err := s.userDb.GetUserByUsername(username)
+func (s *AuthService) Login(logger *slog.Logger, username string, password string) (util.Tokens, error) {
+	user, err := s.userDb.GetUserByUsername(logger, username)
 	if err != nil {
 		return util.Tokens{}, err
 	}
@@ -78,7 +78,7 @@ func (s *AuthService) Login(username string, password string) (util.Tokens, erro
 		CreationTime:   refresh.CreationTime,
 		UserId:         refresh.UserId,
 	}
-	s.sessionDb.AddSession(session)
+	s.sessionDb.AddSession(logger, session)
 
 	tokens := util.Tokens{
 		Access:  access,
@@ -88,12 +88,12 @@ func (s *AuthService) Login(username string, password string) (util.Tokens, erro
 	return tokens, nil
 }
 
-func (s *AuthService) Refresh(refreshToken string, userId uint64) (util.Tokens, error) {
+func (s *AuthService) Refresh(logger *slog.Logger, refreshToken string, userId uint64) (util.Tokens, error) {
 	if userId < 1 {
 		return util.Tokens{}, nil // REPLACE
 	}
 
-	session, err := s.sessionDb.GetSession(auth.HashRefreshTokenId(refreshToken), userId)
+	session, err := s.sessionDb.GetSession(logger, auth.HashRefreshTokenId(refreshToken), userId)
 
 	if err != nil {
 		return util.Tokens{}, err // TODO change erorr
@@ -118,7 +118,7 @@ func (s *AuthService) Refresh(refreshToken string, userId uint64) (util.Tokens, 
 		return util.Tokens{}, err
 	}
 
-	err = s.sessionDb.DeleteSession(session.HashedId)
+	err = s.sessionDb.DeleteSession(logger, session.HashedId)
 	if err != nil {
 		return util.Tokens{}, err
 	}
@@ -129,7 +129,7 @@ func (s *AuthService) Refresh(refreshToken string, userId uint64) (util.Tokens, 
 		CreationTime:   refresh.CreationTime,
 		UserId:         refresh.UserId,
 	}
-	err = s.sessionDb.AddSession(session)
+	err = s.sessionDb.AddSession(logger, session)
 
 	if err != nil {
 		return util.Tokens{}, err
