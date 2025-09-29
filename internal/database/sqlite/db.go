@@ -10,6 +10,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const (
+	PAGE_SIZE = 20
+)
+
 type SQLiteDB struct {
 	*sql.DB
 }
@@ -47,6 +51,21 @@ CREATE TABLE IF NOT EXISTS "categories" (
 	"user_id" INTEGER NOT NULL,
 	PRIMARY KEY("id"),
 	FOREIGN KEY ("user_id") REFERENCES "users"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE TABLE IF NOT EXISTS "tasks" (
+	"id" INTEGER NOT NULL UNIQUE,
+	"name" TEXT NOT NULL,
+	"creation_time" TIMESTAMP NOT NULL,
+	"completion_time" TIMESTAMP NOT NULL,
+	"deadline_time" TIMESTAMP NOT NULL,
+	"is_completed" BOOLEAN NOT NULL,
+	"category_id" INTEGER NOT NULL,
+	"user_id" INTEGER NOT NULL,
+	PRIMARY KEY("id"),
+	FOREIGN KEY ("user_id") REFERENCES "users"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION,
+	FOREIGN KEY ("category_id") REFERENCES "category"("id")
 	ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 `
