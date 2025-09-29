@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -30,11 +31,11 @@ func NewAuthService(userDb database.UsersDB, sessionDb database.SessionsDB, auth
 func (s *AuthService) RegisterNewUser(logger *slog.Logger, username string, password string) error {
 	if username == "" {
 		slog.Info("")
-		return nil
+		return fmt.Errorf("%w for a username", util.ErrEmptyString)
 	}
 	if len(password) < MIN_PASSWORD_LENGHT {
 		slog.Info("")
-		return nil
+		return util.ErrBadPassword
 	}
 
 	user := util.User{
@@ -59,7 +60,7 @@ func (s *AuthService) Login(logger *slog.Logger, username string, password strin
 	isValid := s.authSettings.CompareHash(password, user.Hash)
 	if !isValid {
 		slog.Info("")
-		return util.Tokens{}, err
+		return util.Tokens{}, util.ErrHashMismatch
 	}
 
 	access, _, err := s.tokenSettings.CreateAccessToken(user.Id)
@@ -78,7 +79,11 @@ func (s *AuthService) Login(logger *slog.Logger, username string, password strin
 		CreationTime:   refresh.CreationTime,
 		UserId:         refresh.UserId,
 	}
-	s.sessionDb.AddSession(logger, session)
+
+	err = s.sessionDb.AddSession(logger, session)
+	if err != nil {
+		return util.Tokens{}, err
+	}
 
 	tokens := util.Tokens{
 		Access:  access,
@@ -90,22 +95,16 @@ func (s *AuthService) Login(logger *slog.Logger, username string, password strin
 
 func (s *AuthService) Refresh(logger *slog.Logger, refreshToken string, userId uint64) (util.Tokens, error) {
 	if userId < 1 {
-		return util.Tokens{}, nil // REPLACE
+		return util.Tokens{}, util.ErrInvalidUserId
 	}
 
 	session, err := s.sessionDb.GetSession(logger, auth.HashRefreshTokenId(refreshToken), userId)
 
 	if err != nil {
-		return util.Tokens{}, err // TODO change erorr
-	}
-	if session.UserId == 0 {
-		return util.Tokens{}, err // TODO change erorr
-	}
-	if session.HashedId == "" {
-		return util.Tokens{}, err // TODO change erorr
+		return util.Tokens{}, err
 	}
 	if time.Now().UTC().After(session.ExpirationTime) {
-		return util.Tokens{}, util.ErrSessionExpired // TODO change error
+		return util.Tokens{}, util.ErrSessionExpired
 	}
 
 	access, _, err := s.tokenSettings.CreateAccessToken(userId)
