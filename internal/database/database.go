@@ -52,14 +52,17 @@ type TasksDB interface {
 	// AddTask will create a new task in the database with the specified fields in the task struct.
 	AddTask(logger *slog.Logger, task util.Task) error
 	// GetTask will retrive a specific task by the given taskId.
-	GetTask(logger *slog.Logger, taskId uint64) (util.Task, error)
+	GetTask(logger *slog.Logger, taskId uint64, userId uint64) (util.Task, error)
 	// QUeryTask will retrives all the task that match the provided querySettings.
 	QueryTask(logger *slog.Logger, querySettings util.TaskQuerySettings) ([]util.Task, error)
 	// EditTask will edit a task specific by the id of the task struct.
 	// All fields that are in the task struct that are not the defualt 0 values will be changed in the database.
+	// IsComplete will not be edited. SetTaskCompletion to mark a task as complete.
 	EditTask(logger *slog.Logger, task util.Task) error
 	// DeleteTask will delete the task with the specified taskId.
-	DeleteTask(logger *slog.Logger, taskId uint64) error
+	DeleteTask(logger *slog.Logger, taskId uint64, userId uint64) error
+	//SetTaskCompletion will edit the task's is_complete column to the specific status
+	SetTaskCompletion(logger *slog.Logger, taskId uint64, status bool, userId uint64) error
 }
 
 type (
