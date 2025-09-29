@@ -10,6 +10,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const (
+	PAGE_SIZE = 20
+)
+
 type SQLiteDB struct {
 	*sql.DB
 }
@@ -54,7 +58,7 @@ CREATE TABLE IF NOT EXISTS "tasks" (
 	"name" TEXT NOT NULL,
 	"creation_time" TIMESTAMP NOT NULL,
 	"completion_time" TIMESTAMP NOT NULL,
-	"deadline_time" TIMESTAMP,
+	"deadline_time" TIMESTAMP NOT NULL,
 	"is_completed" BOOLEAN NOT NULL,
 	"category_id" INTEGER NOT NULL,
 	"user_id" INTEGER NOT NULL,
