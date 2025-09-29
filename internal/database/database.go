@@ -32,7 +32,7 @@ type UsersDB interface {
 	EditUsername(logger *slog.Logger, userId uint64, newName string) error
 }
 
-type CategoriesDB   interface{
+type CategoriesDB interface {
 	// AddCategory will create a new category with the specified name for the userId.
 	AddCategory(logger *slog.Logger, name string, userId uint64) error
 	// GetCategory will retrive the specific category specified by name.
@@ -48,8 +48,21 @@ type CategoriesDB   interface{
 	DeleteCategory(logger *slog.Logger, categoryId uint64, userId uint64) error
 }
 
+type TasksDB interface {
+	// AddTask will create a new task in the database with the specified fields in the task struct.
+	AddTask(logger *slog.Logger, task util.Task) error
+	// GetTask will retrive a specific task by the given taskId.
+	GetTask(logger *slog.Logger, taskId uint64) (util.Task, error)
+	// QUeryTask will retrives all the task that match the provided querySettings.
+	QueryTask(logger *slog.Logger, querySettings util.TaskQuerySettings) ([]util.Task, error)
+	// EditTask will edit a task specific by the id of the task struct.
+	// All fields that are in the task struct that are not the defualt 0 values will be changed in the database.
+	EditTask(logger *slog.Logger, task util.Task) error
+	// DeleteTask will delete the task with the specified taskId.
+	DeleteTask(logger *slog.Logger, taskId uint64) error
+}
+
 type (
-	TasksDB        interface{}
 	WorkLogsDB     interface{}
 	PausesDB       interface{}
 	BreaksDB       interface{}
