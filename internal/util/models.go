@@ -2,6 +2,14 @@ package util
 
 import "time"
 
+const (
+	SORT_CREATION uint8 = iota + 1 // Reserve 0 for no op
+	SORT_COMPLETION
+	SORT_DEADLINE
+	ORDER_ASCEDNING
+	ORDER_DESCEDNING
+)
+
 type Session struct {
 	HashedId       string
 	ExpirationTime time.Time
@@ -40,9 +48,9 @@ type Task struct {
 
 type TaskQuerySettings struct {
 	Name      string
-	LowerTime time.Time
-	UpperTime time.Time
+	Category  string
 	SortType  uint8
+	SortOrder uint8
 	Page      uint16
 	UserId    uint64
 }
