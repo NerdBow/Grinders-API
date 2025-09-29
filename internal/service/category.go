@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log/slog"
 
 	"github.com/NerdBow/Grinders-API/internal/database"
@@ -19,10 +20,10 @@ func NewCategoryService(categoryDb database.CategoriesDB) CategoryService {
 
 func (s *CategoryService) CreateCategory(logger *slog.Logger, userId uint64, name string) error {
 	if userId < 1 {
-		return nil
+		return util.ErrInvalidUserId
 	}
 	if name == "" {
-		return nil
+		return fmt.Errorf("%s for a category name", util.ErrEmptyString)
 	}
 
 	err := s.categoryDb.AddCategory(logger, name, userId)
@@ -35,10 +36,10 @@ func (s *CategoryService) CreateCategory(logger *slog.Logger, userId uint64, nam
 
 func (s *CategoryService) GetCategory(logger *slog.Logger, userId uint64, name string) (util.Category, error) {
 	if userId < 1 {
-		return util.Category{}, nil
+		return util.Category{}, util.ErrInvalidUserId
 	}
 	if name == "" {
-		return util.Category{}, nil
+		return util.Category{}, fmt.Errorf("%s for a category name", util.ErrEmptyString)
 	}
 
 	category, err := s.categoryDb.GetCategory(logger, name, userId)
@@ -51,10 +52,10 @@ func (s *CategoryService) GetCategory(logger *slog.Logger, userId uint64, name s
 
 func (s *CategoryService) QueryCategory(logger *slog.Logger, userId uint64, prefix string) ([]util.Category, error) {
 	if userId < 1 {
-		return nil, nil
+		return nil, util.ErrInvalidUserId
 	}
 	if prefix == "" {
-		return nil, nil
+		return nil, fmt.Errorf("%s for a prefix", util.ErrEmptyString)
 	}
 
 	categories, err := s.categoryDb.QueryCategory(logger, prefix, userId)
@@ -67,10 +68,10 @@ func (s *CategoryService) QueryCategory(logger *slog.Logger, userId uint64, pref
 
 func (s *CategoryService) ChangeName(logger *slog.Logger, userId uint64, categoryId uint64, newName string) error {
 	if userId < 1 {
-		return nil
+		return util.ErrInvalidUserId
 	}
 	if categoryId < 1 {
-		return nil
+		return util.ErrInvalidCategoryId
 	}
 
 	err := s.categoryDb.EditCategoryName(logger, categoryId, newName, userId)
@@ -83,10 +84,10 @@ func (s *CategoryService) ChangeName(logger *slog.Logger, userId uint64, categor
 
 func (s *CategoryService) DeleteCategory(logger *slog.Logger, userId uint64, categoryId uint64) error {
 	if userId < 1 {
-		return nil
+		return util.ErrInvalidUserId
 	}
 	if categoryId < 1 {
-		return nil
+		return util.ErrInvalidCategoryId
 	}
 
 	err := s.categoryDb.DeleteCategory(logger, categoryId, userId)
