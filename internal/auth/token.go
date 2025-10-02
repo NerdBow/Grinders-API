@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -52,6 +53,7 @@ func (s *TokenSettings) CreateAccessToken(userId uint64) (string, string, error)
 
 	tokenId := uuid.New().String()
 	if tokenId == "" {
+		slog.LogAttrs(context.Background(), slog.LevelError, "uuid.New CreateAccessToken", slog.String("err", ErrUnableToGenerateUUID.Error()))
 		return "", "", ErrUnableToGenerateUUID
 	}
 
@@ -66,6 +68,7 @@ func (s *TokenSettings) CreateAccessToken(userId uint64) (string, string, error)
 
 	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
+		slog.LogAttrs(context.Background(), slog.LevelError, "SignedString CreateAccessToken", slog.String("err", err.Error()))
 		return "", "", err
 	}
 	return tokenString, tokenId, err
@@ -75,6 +78,7 @@ func (s *TokenSettings) CreateAccessToken(userId uint64) (string, string, error)
 func (s *TokenSettings) CreateRefreshToken(userId uint64) (RefreshToken, error) {
 	tokenId := uuid.New().String()
 	if tokenId == "" {
+		slog.LogAttrs(context.Background(), slog.LevelError, "uuid.New CreateRefreshToken", slog.String("err", ErrUnableToGenerateUUID.Error()))
 		return RefreshToken{}, ErrUnableToGenerateUUID
 	}
 
@@ -97,6 +101,7 @@ func ParseToken(tokenString string) (JWTToken, error) {
 
 	_, err := jwt.ParseWithClaims(tokenString, &claims, keyFunc, jwt.WithValidMethods([]string{"HS256"}))
 	if err != nil {
+		slog.LogAttrs(context.Background(), slog.LevelDebug, "ParseWithClaims ParseToken", slog.String("err", err.Error()))
 		return JWTToken{}, err
 	}
 
@@ -104,6 +109,7 @@ func ParseToken(tokenString string) (JWTToken, error) {
 
 	jwtToken.Sub, err = strconv.ParseUint(claims.Subject, 10, 64)
 	if err != nil {
+		slog.LogAttrs(context.Background(), slog.LevelDebug, "sub parsing ParseToken", slog.String("err", err.Error()))
 		return JWTToken{}, fmt.Errorf("Unable cast subject string into uint64: %w", err)
 	}
 
@@ -112,7 +118,7 @@ func ParseToken(tokenString string) (JWTToken, error) {
 	jwtToken.Iat = claims.IssuedAt.Time
 	jwtToken.Jti = claims.ID
 
-	slog.Debug("Token", slog.Any("jwtStruct", jwtToken))
+	slog.LogAttrs(context.Background(), slog.LevelDebug, "parsed token ParseToken", slog.Any("jwtStruct", jwtToken))
 
 	return jwtToken, nil
 }
