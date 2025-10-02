@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"crypto"
 	"crypto/rand"
 	"encoding/base64"
@@ -48,7 +49,7 @@ func (a ArgonSettings) generateSalt() []byte {
 	saltBytes := make([]byte, a.saltLength)
 	_, err := rand.Read(saltBytes)
 	if err != nil {
-		slog.Error("Unable to generate salt.", slog.String("error", err.Error()))
+		slog.LogAttrs(context.Background(), slog.LevelError, "rand.Read generateSalt", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 	return saltBytes
@@ -69,12 +70,12 @@ func (a ArgonSettings) parseArgonHash(hash string) (ArgonSettings, []byte) {
 
 	hashVersion, err := strconv.Atoi(strings.Split(splitHash[2], "=")[1])
 	if err != nil {
-		slog.Error("Strconv error with parsing hash version", slog.String("error", err.Error()))
+		slog.LogAttrs(context.Background(), slog.LevelError, "hashVersion parsing parseArgonHash", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 
 	if hashVersion != argon2.Version {
-		slog.Error("Mis-matching Argon2Id Version", slog.Int("currentVersion", argon2.Version), slog.Int("hashsVersion", hashVersion))
+		slog.LogAttrs(context.Background(), slog.LevelError, "mismatch version parseArgonHash", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 
@@ -82,18 +83,18 @@ func (a ArgonSettings) parseArgonHash(hash string) (ArgonSettings, []byte) {
 
 	hashMemory, err := strconv.ParseUint(strings.Split(hashParams[0], "=")[1], 10, 32)
 	if err != nil {
-		slog.Error("Strconv error with parsing hash memory", slog.String("error", err.Error()))
+		slog.LogAttrs(context.Background(), slog.LevelError, "hashMemory parsing parseArgonHash", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 	hashTime, err := strconv.ParseUint(strings.Split(hashParams[1], "=")[1], 10, 32)
 	if err != nil {
-		slog.Error("Strconv error with parsing hash time", slog.String("error", err.Error()))
+		slog.LogAttrs(context.Background(), slog.LevelError, "hashTime parsing parseArgonHash", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 
 	hashThreads, err := strconv.ParseUint(strings.Split(hashParams[2], "=")[1], 10, 32)
 	if err != nil {
-		slog.Error("Strconv error with parsing hash threads", slog.String("error", err.Error()))
+		slog.LogAttrs(context.Background(), slog.LevelError, "hashThreads parsing parseArgonHash", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 
@@ -107,7 +108,7 @@ func (a ArgonSettings) parseArgonHash(hash string) (ArgonSettings, []byte) {
 
 	saltBytes, err := base64.RawStdEncoding.DecodeString(splitHash[len(splitHash)-2])
 	if err != nil {
-		slog.Error("Unable to grab salt from argon2 hash.", slog.String("error", err.Error()))
+		slog.LogAttrs(context.Background(), slog.LevelError, "salt parsing parseArgonHash", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 
